@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuộc Phiêu Lưu Của Cú Con - Toán Lớp 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; }
+        .bounce { animation: bounce 0.6s infinite alternate; }
+        .shake { animation: shake 0.4s; }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .btn-answer { transition: all 0.1s; }
+        .btn-answer:hover { transform: scale(1.03); }
+        .btn-answer:active { transform: translateY(6px); border-bottom-width: 0px; margin-top: 6px; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- MÀN HÌNH BẮT ĐẦU CỐT TRUYỆN -->
+    <div id="story-screen" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-8 border-4 border-orange-300 text-center">
+        <h1 class="text-3xl font-extrabold text-orange-500 mb-4">🦉 Cuộc Phiêu Lưu Hái Quả Rừng 🍓</h1>
+        <div class="my-6 flex justify-center">
+            <img src="watermarked_img_5873606537945829463.png" alt="Cú Trí Tuệ" class="h-40 w-auto object-contain drop-shadow-md">
+        </div>
+        <p class="text-lg text-gray-700 leading-relaxed mb-6 bg-orange-50 p-4 rounded-2xl border border-orange-200">
+            Xin chào bé! Cú Con đang trên đường đi tìm <b>10 hạt dẻ vàng</b> để mang về tổ cho bữa tiệc mùa thu. Bé hãy giúp Cú Con vượt qua 10 thử thách tính toán trên đường đi nhé. Mỗi câu trả lời đúng sẽ giúp Cú Con hái được 1 hạt dẻ!
+        </p>
+        <button onclick="startGame()" class="bg-green-500 hover:bg-green-600 text-white text-2xl font-bold px-10 py-4 rounded-full shadow-lg border-b-8 border-green-700 transition transform hover:scale-105">
+            🚀 Bắt Đầu Hành Trình!
+        </button>
+    </div>
+
+    <!-- MÀN HÌNH CHƠI GAME -->
+    <div id="game-screen" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 border-4 border-blue-200 text-center relative hidden">
+        
+        <!-- Header thông tin -->
+        <div class="flex justify-between items-center mb-4">
+            <a href="index.html" class="text-blue-500 hover:text-blue-700 font-bold bg-blue-50 px-4 py-2 rounded-full text-sm">&larr; Thoát</a>
+            <div class="text-lg font-bold text-orange-600 bg-orange-50 px-4 py-1 rounded-full border border-orange-200">
+                Thử thách: <span id="current-q">1</span>/10
+            </div>
+            <div class="text-lg font-bold text-green-600 bg-green-50 px-4 py-1 rounded-full border border-green-200">
+                Hạt dẻ: <span id="score">0</span> 🌰
+            </div>
+        </div>
+
+        <!-- Cốt truyện ngắn & Trạng thái Mascot -->
+        <div class="flex flex-col items-center justify-center mb-4">
+            <div class="relative">
+                <img src="watermarked_img_5873606537945829463.png" alt="Cú Con" id="mascot" class="h-28 w-auto object-contain drop-shadow-md">
+                <!-- Biểu tượng cảm xúc động xuất hiện khi đúng/sai -->
+                <div id="emotion-badge" class="absolute -top-2 -right-2 text-3xl">✨</div>
+            </div>
+            <div id="story-line" class="text-md font-bold text-blue-500 mt-2 h-7">Cú Con gặp một khúc gỗ nhỏ, giải toán để vượt qua nhé!</div>
+            
+            <!-- Bảng câu hỏi lớn (Phép cộng trừ đơn giản trong phạm vi 10 dành cho lớp 1) -->
+            <div class="bg-blue-600 text-white text-5xl font-extrabold py-6 px-8 rounded-3xl shadow-lg w-full border-b-8 border-blue-800 mt-2">
+                <span id="question">2 + 3 = ?</span>
+            </div>
+        </div>
+
+        <!-- Lưới Đáp án (2x2 to rõ cho học sinh lớp 1 dễ bấm) -->
+        <div class="grid grid-cols-2 gap-4" id="answers-container">
+            <!-- Nút đáp án tạo bằng JS -->
+        </div>
+
+    </div>
+
+    <!-- MÀN HÌNH KẾT THÚC KHI HOÀN THÀNH 10 CÂU -->
+    <div id="end-screen" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-8 border-4 border-yellow-300 text-center hidden">
+        <h1 class="text-3xl font-extrabold text-yellow-600 mb-2">🎉 Hoàn Thành Xuất Sắc! 🎉</h1>
+        <div class="my-4 flex justify-center">
+            <img src="watermarked_img_5873606537945829463.png" alt="Cú Trí Tuệ Thắng Lợi" class="h-40 w-auto object-contain drop-shadow-md bounce">
+        </div>
+        <p id="end-message" class="text-xl text-gray-700 font-medium mb-6">
+            Bé đã giúp Cú Con thu hoạch trọn vẹn 10 hạt dẻ vàng mang về tổ ấm!
+        </p>
+        <div class="flex justify-center gap-4">
+            <button onclick="restartGame()" class="bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold px-8 py-3 rounded-full shadow-lg border-b-6 border-blue-700">
+                🔄 Chơi Lại Từ Đầu
+            </button>
+            <a href="index.html" class="bg-gray-500 hover:bg-gray-600 text-white text-xl font-bold px-8 py-3 rounded-full shadow-lg border-b-6 border-gray-700 inline-block">
+                🏠 Về Kho Game
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let questionCount = 0;
+        let score = 0;
+        let currentCorrectAnswer = 0;
+        const maxQuestions = 10;
+
+        const storyScreen = document.getElementById('story-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        
+        const questionEl = document.getElementById('question');
+        const answersContainer = document.getElementById('answers-container');
+        const scoreEl = document.getElementById('score');
+        const currentQEl = document.getElementById('current-q');
+        const mascot = document.getElementById('mascot');
+        const emotionBadge = document.getElementById('emotion-badge');
+        const storyLine = document.getElementById('story-line');
+        const endMessage = document.getElementById('end-message');
+
+        const storylines = [
+            "Cú Con gặp một bụi hoa rực rỡ, giải đúng câu này để hái hoa tặng mẹ nhé!",
+            "Cú Con đang nhảy qua dòng suối nhỏ, hãy tính giúp bạn ấy bước tiếp!",
+            "Cú Con gặp anh Sóc Vàng hỏi đường, trả lời đúng để anh Sóc chỉ lối nào!",
+            "Cú Con đó bụng quá, giải toán nhanh để tìm hạt dẻ thơm ngon nào!",
+            "Cú Con chuẩn bị leo lên cây dẻ cao, cố gắng lên bé ơi!",
+            "Trời bắt đầu lất phất mưa, giải toán để tìm chiếc lá che mưa cho Cú Con nhé!",
+            "Cú Con gặp bạn Thỏ Trắng đang đợi ở gốc cây thông!",
+            "Gần đến tổ ấm rồi, thêm một câu hỏi nữa thôi nào!",
+            "Cú Con nghe tiếng gió thổi qua rừng cây, rất vui khi có bé đồng hành!",
+            "Thử thách cuối cùng để Cú Con hoàn thành chuyến phiêu lưu!"
+        ];
+
+        function startGame() {
+            storyScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            score = 0;
+            questionCount = 0;
+            nextQuestion();
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function nextQuestion() {
+            if (questionCount >= maxQuestions) {
+                gameScreen.classList.add('hidden');
+                endScreen.classList.remove('hidden');
+                endMessage.innerHTML = `Bé đã xuất sắc giành được <b>${score} / 10</b> hạt dẻ vàng mang về tổ ấm! Cú Con cảm ơn bé rất nhiều! 🦉🎉`;
+                return;
+            }
+
+            questionCount++;
+            currentQEl.innerText = questionCount;
+            storyLine.innerText = storylines[questionCount - 1];
+            
+            mascot.className = "h-28 w-auto object-contain drop-shadow-md";
+            emotionBadge.innerText = "✨";
+
+            // Dành cho học sinh lớp 1: Phép cộng trừ trong phạm vi 10 (cơ bản, dễ hiểu)
+            let isPlus = Math.random() < 0.6; // Ưu tiên phép cộng cho lớp 1
+            let num1, num2;
+
+            if (isPlus) {
+                num1 = getRandomInt(0, 7);
+                num2 = getRandomInt(0, 10 - num1); // Tổng tối đa là 10 phù hợp toán lớp 1
+                currentCorrectAnswer = num1 + num2;
+                questionEl.innerText = `${num1} + ${num2} = ?`;
+            } else {
+                num1 = getRandomInt(1, 10);
+                num2 = getRandomInt(0, num1); // Hiệu không âm, tối đa trong phạm vi 10
+                currentCorrectAnswer = num1 - num2;
+                questionEl.innerText = `${num1} - ${num2} = ?`;
+            }
+
+            // Tạo đáp án nhiễu gần đúng
+            let answers = [currentCorrectAnswer];
+            while (answers.length < 4) {
+                let offset = getRandomInt(-2, 2);
+                if (offset === 0) offset = 1;
+                let fakeAns = currentCorrectAnswer + offset;
+                if (fakeAns >= 0 && fakeAns <= 10 && !answers.includes(fakeAns)) {
+                    answers.push(fakeAns);
+                }
+            }
+            answers.sort(() => Math.random() - 0.5);
+
+            // Hiển thị nút bấm
+            answersContainer.innerHTML = '';
+            const colors = [
+                'bg-orange-400 border-orange-600', 
+                'bg-green-400 border-green-600', 
+                'bg-pink-400 border-pink-600', 
+                'bg-purple-400 border-purple-600'
+            ];
+
+            answers.forEach((ans, index) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-answer text-4xl font-bold text-white py-5 rounded-2xl shadow-md border-b-8 ${colors[index]} focus:outline-none`;
+                btn.innerText = ans;
+                btn.onclick = () => checkAnswer(ans, btn);
+                answersContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btn) {
+            const buttons = document.querySelectorAll('.btn-answer');
+            buttons.forEach(b => b.disabled = true);
+
+            if (selected === currentCorrectAnswer) {
+                score++;
+                scoreEl.innerText = score;
+                mascot.classList.add('bounce');
+                emotionBadge.innerText = "🎉🥳";
+                storyLine.innerText = "Chính xác! Cú Con tung hô reo hò và nhận 1 hạt dẻ! 🌰";
+                storyLine.className = "text-md font-bold text-green-600 mt-2 h-7";
+                btn.classList.add('bg-yellow-400', 'border-yellow-600');
+
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1400);
+            } else {
+                mascot.classList.add('shake');
+                emotionBadge.innerText = "💧😞";
+                storyLine.innerText = "Chưa đúng rồi! Cú Con ủ rũ buồn bã... Cố lên bé ơi!";
+                storyLine.className = "text-md font-bold text-red-500 mt-2 h-7";
+                btn.classList.add('bg-gray-400', 'border-gray-600');
+
+                setTimeout(() => {
+                    mascot.classList.remove('shake');
+                    buttons.forEach(b => b.disabled = false);
+                    storyLine.innerText = storylines[questionCount - 1];
+                    storyLine.className = "text-md font-bold text-blue-500 mt-2 h-7";
+                    emotionBadge.innerText = "✨";
+                }, 1200);
+            }
+        }
+
+        function restartGame() {
+            endScreen.classList.add('hidden');
+            storyScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
