@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kho Trò Chơi Học Tập</title>
-    <!-- Sử dụng thư viện Tailwind CSS trực tiếp để giữ giao diện đẹp mà không cần cài đặt -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; }
@@ -26,13 +25,22 @@
             <h2 class="text-3xl font-bold mb-4 text-orange-500">Chào mừng bạn đến với Kho Trò Chơi Học Tập!</h2>
             <p class="mb-4 text-lg">Nơi cung cấp các trò chơi tương tác thú vị cho học sinh tiểu học.</p>
             <div class="flex justify-center mt-8">
-                <!-- Hiển thị ảnh mascot -->
                 <img src="watermarked_img_5873606537945829463.png" alt="Cú Trí Tuệ Mascot" class="max-w-full h-auto rounded-lg shadow-sm" style="max-height: 400px;">
             </div>
         </div>
         <div id="games" class="tab-content">
             <h2 class="text-2xl font-bold mb-4 text-blue-600">Danh sách trò chơi</h2>
-            <p>Kho game đang được cập nhật...</p>
+            
+            <!-- Danh sách game dạng lưới -->
+            <div class="flex flex-wrap gap-6 mt-6">
+                <!-- Thẻ game Toán Học Vui -->
+                <a href="toan-hoc-vui.html" class="block w-64 bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer p-4 border-2 border-transparent hover:border-orange-400">
+                    <img src="watermarked_img_5873606537945829463.png" alt="Toán học" class="w-full h-32 object-contain bg-blue-50 rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-center text-blue-600">Toán Học Vui</h3>
+                    <p class="text-center text-gray-500 text-sm mt-1">Cộng, trừ, nhân cơ bản</p>
+                </a>
+            </div>
+
         </div>
         <div id="admin" class="tab-content">
             <h2 class="text-2xl font-bold mb-4 text-green-600">Khu vực Quản trị</h2>
