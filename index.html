@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Trò Chơi Học Tập</title>
+    <!-- Sử dụng thư viện Tailwind CSS trực tiếp để giữ giao diện đẹp mà không cần cài đặt -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800">
+    <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-blue-600">Kho Game Học Tập</h1>
+        <nav>
+            <button class="mx-2 font-semibold text-blue-500 hover:text-blue-700 tab-btn" data-target="home">Trang Chủ</button>
+            <button class="mx-2 font-semibold text-blue-500 hover:text-blue-700 tab-btn" data-target="games">Trò Chơi</button>
+            <button class="mx-2 font-semibold text-blue-500 hover:text-blue-700 tab-btn" data-target="admin">Quản Trị</button>
+        </nav>
+    </header>
+    <main class="p-8">
+        <div id="home" class="tab-content active text-center">
+            <h2 class="text-3xl font-bold mb-4 text-orange-500">Chào mừng bạn đến với Kho Trò Chơi Học Tập!</h2>
+            <p class="mb-4 text-lg">Nơi cung cấp các trò chơi tương tác thú vị cho học sinh tiểu học.</p>
+            <div class="flex justify-center mt-8">
+                <!-- Hiển thị ảnh mascot -->
+                <img src="watermarked_img_5873606537945829463.png" alt="Cú Trí Tuệ Mascot" class="max-w-full h-auto rounded-lg shadow-sm" style="max-height: 400px;">
+            </div>
+        </div>
+        <div id="games" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 text-blue-600">Danh sách trò chơi</h2>
+            <p>Kho game đang được cập nhật...</p>
+        </div>
+        <div id="admin" class="tab-content">
+            <h2 class="text-2xl font-bold mb-4 text-green-600">Khu vực Quản trị</h2>
+            <p>Công cụ tải lên và quản lý game dành cho giáo viên.</p>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
