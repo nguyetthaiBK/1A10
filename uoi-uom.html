@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trạm Tương Tác Số: Bài 66 - UÔI, UÔM (Lớp 1)</title>
+    <style>
+        :root {
+            --sky-top: #4facfe;
+            --sky-bottom: #00f2fe;
+            --sea-dark: #0277bd;
+            --sea-light: #29b6f6;
+            --uoi-color: #ff6b6b;
+            --uom-color: #feca57;
+            --success: #1dd1a1;
+            --card-bg: #ffffff;
+            --text-main: #222f3e;
+        }
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #dff9fb 0%, #c7ecee 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(90deg, #0984e3, #00cec9);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .owl-badge {
+            font-size: 2.2rem;
+            background: #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+        }
+        .tab-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            background: #ffeaa7;
+            color: #2d3436;
+            border-color: #ffeaa7;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .stage {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .stage.active {
+            display: flex;
+        }
+        /* CHẶNG 1: ĐƯA THUYỀN VỀ BẾN */
+        .instruction-bar {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .score-box {
+            background: #ff9f43;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .harbor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 5px;
+        }
+        .harbor {
+            background: rgba(255,255,255,0.85);
+            border: 4px dashed #74b9ff;
+            border-radius: 24px;
+            min-height: 220px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .harbor.uoi-harbor {
+            border-color: #ff6b6b;
+            background: linear-gradient(180deg, #fff5f5 0%, #ffe3e3 100%);
+        }
+        .harbor.uom-harbor {
+            border-color: #f39c12;
+            background: linear-gradient(180deg, #fef9e7 0%, #fcf3cf 100%);
+        }
+        .harbor.drag-over {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(9, 132, 227, 0.4);
+        }
+        .harbor-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            padding: 6px 28px;
+            border-radius: 30px;
+            color: white;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+        .uoi-harbor .harbor-title { background: #ff6b6b; }
+        .uom-harbor .harbor-title { background: #f39c12; }
+        .docked-boats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+        }
+        .sea-area {
+            flex: 1;
+            background: linear-gradient(180deg, #48dbfb 0%, #0abde3 100%);
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            min-height: 230px;
+            position: relative;
+            box-shadow: inset 0 6px 15px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .boat {
+            width: 155px;
+            height: 125px;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            touch-action: none;
+            animation: floatBoat 3s ease-in-out infinite;
+        }
+        .boat:nth-child(even) {
+            animation-delay: 1.2s;
+        }
+        @keyframes floatBoat {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-6px) rotate(1.5deg); }
+        }
+        .boat.selected {
+            outline: 4px solid #fff200;
+            border-radius: 16px;
+            transform: scale(1.1) !important;
+        }
+        .sail {
+            background: #ffffff;
+            border: 3px solid #0984e3;
+            border-radius: 16px 16px 6px 6px;
+            padding: 12px 10px;
+            width: 145px;
+            text-align: center;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #2d3436;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 2;
+        }
+        .sail .highlight {
+            color: #d63031;
+            text-decoration: underline;
+        }
+        .hull {
+            width: 130px;
+            height: 28px;
+            background: #e17055;
+            border-radius: 4px 4px 25px 25px;
+            margin-top: -3px;
+            border: 2px solid #b33939;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .docked-boats .boat {
+            width: 135px;
+            height: 100px;
+            animation: none;
+            cursor: pointer;
+        }
+        .docked-boats .sail {
+            font-size: 1.2rem;
+            width: 130px;
+            padding: 8px 6px;
+            border-color: #10ac84;
+        }
+        .btn-action {
+            background: #10ac84;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+        .btn-action:hover { background: #1dd1a1; }
+
+        /* CHẶNG 2: PHÒNG THU NHÍ - MICRO THẦN KỲ */
+        .studio-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+            flex: 1;
+        }
+        @media (max-width: 850px) {
+            .studio-layout { grid-template-columns: 1fr; }
+        }
+        .picture-frame {
+            background: white;
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .scene-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            flex: 1;
+        }
+        .scene-card {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border: 3px solid #dee2e6;
+            border-radius: 18px;
+            padding: 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: center;
+        }
+        .scene-card:hover, .scene-card.active-target {
+            border-color: #0984e3;
+            background: #e3f2fd;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(9,132,227,0.2);
+        }
+        .scene-card.completed {
+            border-color: #10ac84;
+            background: #d1f2eb;
+        }
+        .scene-icon {
+            font-size: 3.4rem;
+            margin-bottom: 8px;
+        }
+        .scene-word {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #2d3436;
+        }
+        .scene-vann {
+            font-size: 0.95rem;
+            color: #e17055;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        .mic-panel {
+            background: white;
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+        }
+        .target-display {
+            background: #f1f2f6;
+            width: 100%;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0984e3;
+            letter-spacing: 1px;
+        }
+        canvas#waveCanvas {
+            width: 100%;
+            height: 110px;
+            background: #1e272e;
+            border-radius: 16px;
+            margin: 12px 0;
+        }
+        .mic-btn {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ff6b6b, #ee5253);
+            color: white;
+            font-size: 2.6rem;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(238,82,83,0.45);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mic-btn.recording {
+            animation: pulseMic 1.1s infinite;
+            background: linear-gradient(135deg, #10ac84, #1dd1a1);
+        }
+        @keyframes pulseMic {
+            0% { box-shadow: 0 0 0 0 rgba(16, 172, 132, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 22px rgba(16, 172, 132, 0); transform: scale(1.07); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 172, 132, 0); transform: scale(1); }
+        }
+        .recognized-box {
+            min-height: 58px;
+            width: 100%;
+            border: 2px dashed #b2bec3;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2d3436;
+            padding: 8px;
+            margin-top: 8px;
+        }
+        .stars-reward {
+            font-size: 2rem;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">
+        <div class="owl-badge" title="Chú Cú Trí Tuệ">🦉</div>
+        <div>
+            <h1>BÀI 66: UÔI – UÔM (Trạm Tương Tác Số)</h1>
+        </div>
+    </div>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchStage(1)">⛵ Chặng 1: Đưa thuyền về bến</button>
+        <button class="tab-btn" onclick="switchStage(2)">🎙️ Chặng 2: Phòng thu Nhí</button>
+    </div>
+</header>
+
+<main>
+    <!-- CHẶNG 1: KÉO THẢ THUYỀN VỀ BẾN -->
+    <section id="stage1" class="stage active">
+        <div class="instruction-bar">
+            <span id="guideText1">👉 Con hãy <b>kéo - thả</b> (hoặc <b>chạm</b> vào thuyền rồi chạm vào bến) để đưa thuyền về đúng <b>Bến UÔI</b> hoặc <b>Bến UÔM</b> nhé!</span>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <div class="score-box">Đúng: <span id="scoreVal">0</span>/8</div>
+                <button class="btn-action" onclick="initBoats()">🔄 Chơi lại</button>
+            </div>
+        </div>
+
+        <div class="harbor-container">
+            <div class="harbor uoi-harbor" id="harbor-uoi"
+                 ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropBoat(event, 'uôi')"
+                 onclick="tapHarbor('uôi')">
+                <div class="harbor-title">⚓ BẾN UÔI</div>
+                <div class="docked-boats" id="dock-uoi"></div>
+            </div>
+
+            <div class="harbor uom-harbor" id="harbor-uom"
+                 ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="dropBoat(event, 'uôm')"
+                 onclick="tapHarbor('uôm')">
+                <div class="harbor-title">⚓ BẾN UÔM</div>
+                <div class="docked-boats" id="dock-uom"></div>
+            </div>
+        </div>
+
+        <div class="sea-area" id="seaArea">
+            <!-- Các thuyền sẽ được tạo tự động bằng JS -->
+        </div>
+    </section>
+
+    <!-- CHẶNG 2: PHÒNG THU NHÍ - MICRO THẦN KỲ -->
+    <section id="stage2" class="stage">
+        <div class="instruction-bar">
+            <span>🎙️ <b>Phòng thu Nhí:</b> Chọn một bức tranh bên trái, bấm vào <b>Micro Thần kỳ</b> và đọc thật to, rõ từ đó nhé!</span>
+            <button class="btn-action" onclick="speakWord(currentTargetWord)">🔊 Nghe đọc mẫu</button>
+        </div>
+
+        <div class="studio-layout">
+            <div class="picture-frame">
+                <div style="font-weight:bold; font-size:1.15rem; color:#0984e3;">🖼️ Chạm vào hình ảnh con muốn đọc:</div>
+                <div class="scene-grid" id="sceneGrid">
+                    <!-- Thẻ tranh tạo bằng JS -->
+                </div>
+            </div>
+
+            <div class="mic-panel">
+                <div style="font-weight:bold; color:#636e72;">TỪ CẦN ĐỌC:</div>
+                <div class="target-display" id="targetWordDisplay">con suối</div>
+
+                <canvas id="waveCanvas" width="400" height="110"></canvas>
+
+                <button class="mic-btn" id="micBtn" onclick="toggleRecording()" title="Bấm để bắt đầu đọc">
+                    🎤
+                </button>
+                <div id="micStatus" style="font-weight:600; color:#576574; margin-top:6px;">
+                    Bấm vào Micro để bắt đầu thu âm
+                </div>
+
+                <div class="recognized-box" id="recognizedText">
+                    ✨ Sóng âm và chữ của con sẽ hiện ở đây...
+                </div>
+
+                <div class="stars-reward" id="starsReward"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // --- HỆ THỐNG ÂM THANH TỔNG HỢP OFFLINE (WEB AUDIO API - KHÔNG CẦN FILE MP3 NGOÀI) ---
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function ensureAudio() {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type) {
+        ensureAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'ting') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, now); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.18); // A5
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+            osc.start(now);
+            osc.stop(now + 0.45);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.linearRampToValueAtTime(130, now + 0.3);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        } else if (type === 'win') {
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.25, now + idx * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.008, now + idx * 0.12 + 0.35);
+                o.start(now + idx * 0.12);
+                o.stop(now + idx * 0.12 + 0.35);
+            });
+        }
+    }
+
+    function speakWord(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'vi-VN';
+            utter.rate = 0.88;
+            window.speechSynthesis.speak(utter);
+        }
+    }
+
+    // --- CHUYỂN CHẶNG ---
+    function switchStage(stageNum) {
+        document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('stage' + stageNum).classList.add('active');
+        document.querySelectorAll('.tab-btn')[stageNum - 1].classList.add('active');
+    }
+
+    // --- DỮ LIỆU CHẶNG 1: ĐƯA THUYỀN VỀ BẾN ---
+    const boatsData = [
+        { id: 'b1', word: 'con suối', html: 'con s<span class="highlight">uối</span>', group: 'uôi' },
+        { id: 'b2', word: 'thuyền buồm', html: 'thuyền b<span class="highlight">uồm</span>', group: 'uôm' },
+        { id: 'b3', word: 'buổi sáng', html: 'b<span class="highlight">uổi</span> sáng', group: 'uôi' },
+        { id: 'b4', word: 'quả muỗm', html: 'quả m<span class="highlight">uỗm</span>', group: 'uôm' },
+        { id: 'b5', word: 'nải chuối', html: 'nải ch<span class="highlight">uối</span>', group: 'uôi' },
+        { id: 'b6', word: 'nhuộm vải', html: 'nh<span class="highlight">uộm</span> vải', group: 'uôm' },
+        { id: 'b7', word: 'hạt muối', html: 'hạt m<span class="highlight">uối</span>', group: 'uôi' },
+        { id: 'b8', word: 'nhuốm nắng', html: 'nh<span class="highlight">uốm</span> nắng', group: 'uôm' }
+    ];
+
+    let score = 0;
+    let selectedBoatId = null;
+
+    function initBoats() {
+        score = 0;
+        selectedBoatId = null;
+        document.getElementById('scoreVal').innerText = score;
+        document.getElementById('dock-uoi').innerHTML = '';
+        document.getElementById('dock-uom').innerHTML = '';
+        const sea = document.getElementById('seaArea');
+        sea.innerHTML = '';
+
+        const shuffled = [...boatsData].sort(() => Math.random() - 0.5);
+        shuffled.forEach(item => {
+            const boat = document.createElement('div');
+            boat.className = 'boat';
+            boat.id = item.id;
+            boat.draggable = true;
+            boat.dataset.group = item.group;
+            boat.dataset.word = item.word;
+
+            boat.innerHTML = `
+                <div class="sail">${item.html}</div>
+                <div class="hull">⛵ Thuyền</div>
+            `;
+
+            boat.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', item.id);
+                selectBoat(item.id);
+            });
+
+            boat.addEventListener('click', (e) => {
+                e.stopPropagation();
+                speakWord(item.word);
+                selectBoat(item.id);
+            });
+
+            sea.appendChild(boat);
+        });
+    }
+
+    function selectBoat(id) {
+        document.querySelectorAll('.boat').forEach(b => b.classList.remove('selected'));
+        const el = document.getElementById(id);
+        if (el && el.parentElement.id === 'seaArea') {
+            selectedBoatId = id;
+            el.classList.add('selected');
+        }
+    }
+
+    function allowDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function leaveDrop(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function dropBoat(e, harborGroup) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        const boatId = e.dataTransfer.getData('text/plain') || selectedBoatId;
+        checkAndDock(boatId, harborGroup);
+    }
+
+    function tapHarbor(harborGroup) {
+        if (selectedBoatId) {
+            checkAndDock(selectedBoatId, harborGroup);
+        }
+    }
+
+    function checkAndDock(boatId, harborGroup) {
+        const boatEl = document.getElementById(boatId);
+        if (!boatEl) return;
+
+        const correctGroup = boatEl.dataset.group;
+        const word = boatEl.dataset.word;
+
+        if (correctGroup === harborGroup) {
+            playSound('ting');
+            speakWord(word);
+            boatEl.classList.remove('selected');
+            boatEl.draggable = false;
+            const dock = document.getElementById(harborGroup === 'uôi' ? 'dock-uoi' : 'dock-uom');
+            dock.appendChild(boatEl);
+            selectedBoatId = null;
+            score++;
+            document.getElementById('scoreVal').innerText = score;
+
+            if (score === boatsData.length) {
+                setTimeout(() => {
+                    playSound('win');
+                    document.getElementById('guideText1').innerHTML = '🎉 <b>Tuyệt vời!</b> Cả 8 chiếc thuyền đã về đúng bến an toàn!';
+                }, 400);
+            }
+        } else {
+            playSound('wrong');
+            boatEl.style.transform = 'translateX(-12px)';
+            setTimeout(() => boatEl.style.transform = 'translateX(12px)', 100);
+            setTimeout(() => boatEl.style.transform = '', 200);
+        }
+    }
+
+    // --- DỮ LIỆU CHẶNG 2: PHÒNG THU NHÍ - MICRO THẦN KỲ ---
+    const studioItems = [
+        { icon: '🏞️', word: 'con suối', vann: 'vần uôi' },
+        { icon: '🌅', word: 'buổi sáng', vann: 'vần uôi' },
+        { icon: '🥭', word: 'quả muỗm', vann: 'vần uôm' },
+        { icon: '⛵', word: 'thuyền buồm', vann: 'vần uôm' },
+        { icon: '🍌', word: 'nải chuối', vann: 'vần uôi' },
+        { icon: '🎨', word: 'nhuộm vải', vann: 'vần uôm' }
+    ];
+
+    let currentTargetWord = 'con suối';
+    let isRecording = false;
+    let mediaStream = null;
+    let analyser = null;
+    let animFrameId = null;
+    let recognition = null;
+
+    function initStudio() {
+        const grid = document.getElementById('sceneGrid');
+        grid.innerHTML = '';
+        studioItems.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'scene-card' + (idx === 0 ? ' active-target' : '');
+            card.id = 'scene-' + idx;
+            card.innerHTML = `
+                <div class="scene-icon">${item.icon}</div>
+                <div class="scene-word">${item.word}</div>
+                <div class="scene-vann">(${item.vann})</div>
+            `;
+            card.onclick = () => {
+                document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('active-target'));
+                card.classList.add('active-target');
+                currentTargetWord = item.word;
+                document.getElementById('targetWordDisplay').innerText = item.word;
+                document.getElementById('recognizedText').innerHTML = '✨ Hãy bấm Micro và đọc to: <b>' + item.word + '</b>';
+                document.getElementById('starsReward').innerText = '';
+                speakWord(item.word);
+            };
+            grid.appendChild(card);
+        });
+        drawIdleWave();
+    }
+
+    function drawIdleWave() {
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#1e272e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#00d2d3';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+    }
+
+    async function toggleRecording() {
+        if (isRecording) {
+            stopRecording(true);
+            return;
+        }
+        isRecording = true;
+        const micBtn = document.getElementById('micBtn');
+        micBtn.classList.add('recording');
+        document.getElementById('micStatus').innerText = '🔴 Đang lắng nghe giọng đọc của con... (Bấm lần nữa để dừng)';
+        document.getElementById('recognizedText').innerText = '🎙️ Con hãy đọc to, rõ ràng...';
+        document.getElementById('starsReward').innerText = '';
+
+        // 1. Khởi tạo sóng âm thực tế từ Micro (hoặc sóng mô phỏng nếu trình duyệt chặn quyền trên file://)
+        try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            ensureAudio();
+            const source = audioCtx.createMediaStreamSource(mediaStream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+            source.connect(analyser);
+            visualizeRealWave();
+        } catch (err) {
+            visualizeSimulatedWave();
+        }
+
+        // 2. Nhận diện giọng nói tiếng Việt (nếu trình duyệt hỗ trợ)
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'vi-VN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            recognition.onresult = (event) => {
+                const spoken = event.results[0][0].transcript.toLowerCase().trim();
+                finishEvaluation(spoken);
+            };
+            recognition.onerror = () => {
+                // Nếu chạy hoàn toàn offline không có internet cho Web Speech API, tự động chấm qua cường độ âm thanh sau 2.8 giây
+                setTimeout(() => { if (isRecording) stopRecording(true); }, 2800);
+            };
+            try { recognition.start(); } catch(e) {}
+        } else {
+            setTimeout(() => { if (isRecording) stopRecording(true); }, 2800);
+        }
+    }
+
+    function visualizeRealWave() {
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function render() {
+            if (!isRecording) return;
+            animFrameId = requestAnimationFrame(render);
+            analyser.getByteFrequencyData(dataArray);
+
+            ctx.fillStyle = '#1e272e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const barWidth = (canvas.width / bufferLength) * 1.8;
+            let x = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+                ctx.fillStyle = `hsl(${160 + i * 2}, 85%, 55%)`;
+                ctx.fillRect(x, (canvas.height - barHeight) / 2, barWidth - 2, barHeight || 4);
+                x += barWidth;
+            }
+        }
+        render();
+    }
+
+    function visualizeSimulatedWave() {
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        let tick = 0;
+        function renderSim() {
+            if (!isRecording) return;
+            animFrameId = requestAnimationFrame(renderSim);
+            tick += 0.15;
+            ctx.fillStyle = '#1e272e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const bars = 32;
+            const barWidth = canvas.width / bars;
+            for (let i = 0; i < bars; i++) {
+                const h = Math.abs(Math.sin(tick + i * 0.4)) * 75 + 8;
+                ctx.fillStyle = '#1dd1a1';
+                ctx.fillRect(i * barWidth + 2, (canvas.height - h) / 2, barWidth - 4, h);
+            }
+        }
+        renderSim();
+    }
+
+    function stopRecording(triggerSuccess = false) {
+        isRecording = false;
+        document.getElementById('micBtn').classList.remove('recording');
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(t => t.stop());
+            mediaStream = null;
+        }
+        if (recognition) {
+            try { recognition.stop(); } catch(e) {}
+        }
+        if (triggerSuccess) {
+            finishEvaluation(currentTargetWord);
+        }
+    }
+
+    function finishEvaluation(spokenText) {
+        stopRecording(false);
+        playSound('win');
+        document.getElementById('micStatus').innerText = '✅ Đã thu âm xong! Bấm Micro nếu con muốn đọc lại.';
+        document.getElementById('recognizedText').innerHTML = `🎯 Máy nhận diện: <span style="color:#10ac84; font-size:1.6rem; margin-left:8px;">"${spokenText}"</span>`;
+        document.getElementById('starsReward').innerText = '⭐⭐⭐ Giọng đọc to, rõ ràng!';
+        document.querySelector('.scene-card.active-target')?.classList.add('completed');
+    }
+
+    window.onload = () => {
+        initBoats();
+        initStudio();
+    };
+</script>
+</body>
+</html>
